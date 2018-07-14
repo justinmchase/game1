@@ -1,0 +1,1 @@
+.\bin\love-11.1.0-win32\lovec.exe .
