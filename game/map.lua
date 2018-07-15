@@ -27,31 +27,29 @@ function generate(width, height)
   end
 end
 
-function update(viewport)
+function dimensions()
+  return w, h, quadInfo.size
+end
 
-
-  scale = 2
+function update(viewport, scale)
   spritebatch:clear()
+  tileSize = quadInfo.size * scale
+  tx = math.max(1, math.floor(math.max(0, viewport.x - viewport.radiusx) / tileSize))
+  ty = math.max(1, math.floor(math.max(0, viewport.y - viewport.radiusy) / tileSize))
+  tw = math.min(w, math.ceil((viewport.x + viewport.radiusx) / tileSize))
+  th = math.min(h, math.ceil((viewport.y + viewport.radiusy) / tileSize))
   for l = 1, 4, 1 do
-    for x = 1, w, 1 do
-      for y = 1, h, 1 do
+    for x = tx, tw, 1 do
+      for y = ty, th, 1 do
         if layers[l][x][y] ~= nil then
-          posx = (x - 1) * quadInfo.size * scale
-          posy = (y - 1) * quadInfo.size * scale
-
-          tilesize = quadInfo.size * scale
-
-          if (viewport.x - posx) * (viewport.x - posx) < ((viewport.radiusx + tilesize) * (viewport.radiusx + tilesize)) and (viewport.y - posy) * (viewport.y - posy) < ((viewport.radiusy + tilesize) * (viewport.radiusy + tilesize)) then
-
-            quad = quadInfo.quads[layers[l][x][y]]
-            spritebatch:add(quad, posx - viewport.x + viewport.radiusx, posy - viewport.y + viewport.radiusy, 0, scale, scale)
-
-          end
+          posx = (x - 1) * tilesize
+          posy = (y - 1) * tilesize
+          quad = quadInfo.quads[layers[l][x][y]]
+          spritebatch:add(quad, posx - viewport.x + viewport.radiusx, posy - viewport.y + viewport.radiusy, 0, scale, scale)
         end
       end
     end
   end
-
 end
 
 function draw()
@@ -62,5 +60,6 @@ return {
   init = init,
   generate = generate,
   update = update,
-  draw = draw
+  draw = draw,
+  dimensions = dimensions
 }
